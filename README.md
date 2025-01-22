@@ -48,31 +48,31 @@ Objective: Make sure that the data is clean and ready for the posterior analysis
 
 Load the dataset into a Pandas DataFrame.
 
-``python
+```python
 import pandas as pd
 
 data = pd.read_csv('Synthetic_Financial_datasets_log.csv', delimiter = ',')
 df = data.copy()
 df
-``
+```
 Inspect the first few rows to familiarize yourself with the structure and content.
-``python
+```python
 df.head()
-``
+```
 Check the data type for each column.
-``python
+```python
 df.dtypes
-``
+```
 
 Handling of Null Values:
 
 Identifies columns with null or missing values.
-``python
+```python
 df.isna().sum()
 
 df.isnull().sum()
 
-``
+```
 
 ## **Phase 2: Quantitative & Qualitative Analysis with SQL**  
 Objective: Extract valuable information and patterns that help to detect financial fraud.
@@ -82,7 +82,7 @@ Objective: Extract valuable information and patterns that help to detect financi
 **Transaction Distribution:**
 What is the distribution of transactions by type (e.g., transfer, payment)?
 
-``sql
+```sql
 DROP TABLE IF EXISTS transaction_dist;
 
 SELECT
@@ -111,10 +111,10 @@ GROUP BY
 ORDER BY 
 	count DESC;
 
-``
+```
 
 What is the distribution of transaction amounts?
-``sql
+```sql
 SELECT 
 	type_name,
 	COUNT(*) AS count,
@@ -125,20 +125,20 @@ GROUP BY
 	type_name
 ORDER BY 
 	total_amount DESC;
-``
+```
 
 **Fraud Frequency:**
 What percentage of total transactions are fraudulent?
-``sql
+```sql
 SELECT 
 	SUM(isfraud) AS total_frauds,
 	COUNT(*) AS total_transactions,
 	(SUM(isfraud) * 100.0 / COUNT(*)) AS fraud_percentage
 FROM 
 	fraud_transaction;
-``
+```
 How does the frequency of fraud vary depending on the type of transaction?
-``sql
+```sql
 SELECT 
 	td.transaction_id,
 	td.amount,
@@ -179,13 +179,13 @@ GROUP BY
     type_name
 ORDER BY
     total_frauds DESC;
-``
+```
 
 ### Temporal Analysis:
 
 **Temporal Trends:**
 How does the number of transactions and frauds vary over time?
-``sql
+```sql
 SELECT
     td.day,
     COUNT(td.transaction_id) AS total_transactions,
@@ -200,9 +200,9 @@ GROUP BY
     td.day
 ORDER BY
     total_transactions DESC;
-``
+```
 Are there seasonal patterns or peaks in certain periods?
-``sql
+```sql
 SELECT
     td.day,
     COUNT(td.transaction_id) AS total_transactions,
@@ -232,12 +232,12 @@ GROUP BY
     td.day
 ORDER BY
     total_frauds DESC;
-``
+```
 ### User and Accounts Analysis:
 
 **Identifying Suspicious Behavior:**
 Which accounts have the highest number of fraudulent transactions?
-``sql
+```sql
 SELECT * FROM dest_transactions;
 SELECT * FROM fraud_transaction;
 
@@ -254,9 +254,9 @@ GROUP BY
 	dt.namedest
 ORDER BY
 	total_frauds DESC;
-``
+```
 Are there accounts with multiple high-value transactions in short periods?
-``sql
+```sql
 SELECT 
     dt.namedest,
     td.day,
@@ -276,11 +276,11 @@ GROUP BY
 ORDER BY 
     td.day ASC, 
     high_value_transactions DESC;
-``
+```
 
 **Relationships between Accounts:**
 Are there patterns in transfers between accounts that could indicate fraud rings?
-``sql
+```sql
 -- Step 1: Identify high activity accounts
 
 SELECT
@@ -338,12 +338,12 @@ ORDER BY
     COUNT(*) DESC;  
 
 
-``
+```
 ### Analysis of Transaction Amounts:
 
 **Anomaly Detection:**
 What are the average and maximum amounts of fraudulent versus legitimate transactions?
-``sql
+```sql
 
 SELECT
     ft.isFraud,
@@ -359,9 +359,9 @@ GROUP BY
     ft.isFraud
 ORDER BY
     ft.isFraud DESC;
-``
+```
 Are there any amount thresholds that are more likely to be fraudulent?
-``sql
+```sql
 SELECT
     CASE
         WHEN ot.amount <= 1000 THEN '0-1000'
@@ -384,4 +384,4 @@ GROUP BY
     amount_range
 ORDER BY
     fraud_percentage DESC;
-``
+```
